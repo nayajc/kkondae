@@ -21,7 +21,7 @@ const QUESTIONS = [
     {
         id: 3,
         question: "요즘 MZ세대는 회식 참여를 잘 안 해요. 당신의 생각은?",
-        question_en: "Do MZ generations these days rarely participate in company outings. What do you think?",
+        question_en: "Do Gen Z these days rarely participate in company outings. What do you think?",
         options: [
             { text: "자율이면 좋지, 강요는 안 해야지 🤝", text_en: "I think it's good to be autonomous, we shouldn't force it. 🤝", score: 0 },
             { text: "회식도 업무의 연장이다 💼", text_en: "Company outings are also extensions of work. 💼", score: 1 }
@@ -48,7 +48,7 @@ const QUESTIONS = [
     {
         id: 6,
         question: "업무 효율을 위해 '카톡 대신 협업툴 사용'을 제안 받았을 때?",
-        question_en: "When a junior suggested using a collaboration tool instead of KakaoTalk for work efficiency?",
+        question_en: "When a junior suggested using a collaboration tool instead of Whatsapp for work efficiency?",
         options: [
             { text: "오, 한번 써보자 🚀", text_en: "Oh, let's try it! 🚀", score: 0 },
             { text: "카톡이 최고지, 뭘 또 배우라고? 😒", text_en: "KakaoTalk is the best, why do I have to learn more? 😒", score: 1 }
@@ -120,7 +120,7 @@ const QUESTIONS = [
     {
         id: 14,
         question: "단체 채팅방에서 'ㅋ', 'ㅎ'의 개수가 신경 쓰이나요?",
-        question_en: "Do you pay attention to the number of 'ㅋ' and 'ㅎ' in group chats?",
+        question_en: "Do you pay attention to the number of 'Kkk' and 'lol' in group chats?",
         options: [
             { text: "전혀 🤷‍♀️", text_en: "Not at all. 🤷‍♀️", score: 0 },
             { text: "요즘 애들 왜 이렇게 성의 없지? 😒", text_en: "Why are youngsters these days so careless? 😒", score: 1 }

@@ -320,6 +320,18 @@ function getText(obj, key) {
     return obj[key];
 }
 
+// 시작 화면 설명 다국어 텍스트 추가
+const introDescription = {
+    ko: [
+        '회사의 꼰대 문화를 척결하기 위한 재미있는 테스트입니다!',
+        '당신이 얼마나 꼰대인지 스스로 돌아볼 수 있는 기회를 마련해드려요.'
+    ],
+    en: [
+        'A fun test to eradicate kkondae (old-fashioned boss) culture in the workplace!',
+        'Find out for yourself how much of a kkondae you are.'
+    ]
+};
+
 // 모든 화면의 텍스트를 언어에 맞게 업데이트
 function updateAllTexts() {
     // 시작 화면
@@ -329,6 +341,11 @@ function updateAllTexts() {
     document.getElementById('nickname').placeholder = currentLang === 'ko' ? '예: 김철수' : 'e.g. John Doe';
     document.getElementById('startBtn').innerHTML = `<i class="fas fa-play"></i> ${currentLang === 'ko' ? '테스트 시작하기' : 'Start Test'}`;
     document.getElementById('langToggleBtn').textContent = currentLang === 'ko' ? 'ENGLISH' : '한국어';
+
+    // 시작 화면 설명
+    const descPs = document.querySelectorAll('.description p');
+    descPs[0].textContent = introDescription[currentLang][0];
+    descPs[1].textContent = introDescription[currentLang][1];
 
     // 결과 화면 버튼
     document.getElementById('shareBtn').innerHTML = `<i class="fas fa-share-alt"></i> ${currentLang === 'ko' ? '카카오톡 공유' : 'Share on Kakao'}`;
