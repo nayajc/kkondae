@@ -204,26 +204,62 @@ class KkondaeTest {
         const resultType = getResultType(this.score);
         const shareText = `🧐 꼰대 테스트 결과\n\n${this.nickname}님은 "${resultType.name}"입니다!\n꼰대 점수: ${this.score}/15점\n\n나도 테스트해보세요! 😄\n\n${window.location.href}`;
         
-        // 모바일에서는 카카오톡 앱으로, 데스크톱에서는 클립보드 복사
-        if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            // 모바일: 카카오톡 앱으로 메시지 전송
+        // 카카오톡 인앱 브라우저 감지
+        const isKakaoInApp = /KAKAOTALK/i.test(navigator.userAgent);
+        const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isKakaoInApp) {
+            // 카카오톡 인앱 브라우저에서는 클립보드 복사 후 안내
+            this.copyToClipboard(shareText);
+            alert('공유 텍스트가 복사되었습니다!\n카카오톡 채팅창에 붙여넣기 해주세요.');
+        } else if (isMobile) {
+            // 일반 모바일 브라우저: 카카오톡 앱으로 전송 시도
             const encodedText = encodeURIComponent(shareText);
+            
+            // 카카오톡 앱 실행 시도
             window.location.href = `kakaotalk://send?text=${encodedText}`;
+            
+            // 3초 후 앱이 실행되지 않으면 클립보드 복사로 폴백
+            setTimeout(() => {
+                this.copyToClipboard(shareText);
+                alert('카카오톡 앱이 실행되지 않았습니다.\n공유 텍스트가 복사되었으니 카카오톡에서 붙여넣기 해주세요.');
+            }, 3000);
         } else {
             // 데스크톱: 클립보드에 복사
-            navigator.clipboard.writeText(shareText).then(() => {
-                alert('카카오톡 공유 텍스트가 클립보드에 복사되었습니다!\n카카오톡에서 친구에게 붙여넣기 해주세요.');
-            }).catch(() => {
-                // 클립보드 API가 지원되지 않는 경우
-                const textArea = document.createElement('textarea');
-                textArea.value = shareText;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                alert('카카오톡 공유 텍스트가 클립보드에 복사되었습니다!\n카카오톡에서 친구에게 붙여넣기 해주세요.');
-            });
+            this.copyToClipboard(shareText);
+            alert('카카오톡 공유 텍스트가 클립보드에 복사되었습니다!\n카카오톡에서 친구에게 붙여넣기 해주세요.');
         }
+    }
+    
+    copyToClipboard(text) {
+        // 모던 브라우저용 클립보드 API
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).catch(() => {
+                this.fallbackCopyToClipboard(text);
+            });
+        } else {
+            // 폴백 방식
+            this.fallbackCopyToClipboard(text);
+        }
+    }
+    
+    fallbackCopyToClipboard(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+        } catch (err) {
+            console.error('클립보드 복사 실패:', err);
+        }
+        
+        document.body.removeChild(textArea);
     }
 
     resetTest() {
