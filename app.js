@@ -82,11 +82,11 @@ class KkondaeTest {
         }
 
         const question = QUESTIONS[this.currentQuestion];
-        document.querySelector('.question-text').textContent = question.question;
+        document.querySelector('.question-text').textContent = getText(question, 'question');
         
         const options = document.querySelectorAll('.option-btn');
         options.forEach((option, index) => {
-            option.querySelector('.option-text').textContent = question.options[index].text;
+            option.querySelector('.option-text').textContent = getText(question.options[index], 'text');
             option.dataset.score = question.options[index].score;
             option.classList.remove('selected');
         });
@@ -125,10 +125,10 @@ class KkondaeTest {
         const resultType = getResultType(this.score);
         
         // 결과 화면 업데이트
-        document.querySelector('.result-title').textContent = resultType.name;
+        document.querySelector('.result-title').textContent = getText(resultType, 'name');
         document.querySelector('.result-emoji').textContent = resultType.emoji;
         document.querySelector('.score-value').textContent = this.score;
-        document.querySelector('.result-description').textContent = resultType.description;
+        document.querySelector('.result-description').textContent = getText(resultType, 'description');
 
         // Firebase에 결과 저장 (실패 시 로컬 스토리지로 폴백)
         try {
@@ -202,7 +202,7 @@ class KkondaeTest {
 
     shareToKakao() {
         const resultType = getResultType(this.score);
-        const shareText = `🧐 꼰대 테스트 결과\n\n${this.nickname}님은 "${resultType.name}"입니다!\n꼰대 점수: ${this.score}/15점\n\n나도 테스트해보세요! 😄\n\n${window.location.href}`;
+        const shareText = `🧐 꼰대 테스트 결과\n\n${this.nickname}님은 "${getText(resultType, 'name')}"입니다!\n꼰대 점수: ${this.score}/15점\n\n나도 테스트해보세요! 😄\n\n${window.location.href}`;
         
         // 카카오톡 인앱 브라우저 감지
         const isKakaoInApp = /KAKAOTALK/i.test(navigator.userAgent);
@@ -291,6 +291,62 @@ class KkondaeTest {
             activeScreen.classList.remove('fade-in');
         }, 500);
     }
+
+    refreshDynamicTexts() {
+        // 질문 화면일 때만 질문/옵션 갱신
+        if (document.getElementById('testScreen').classList.contains('active')) {
+            this.loadQuestion();
+        }
+        // 결과 화면일 때 결과 갱신
+        if (document.getElementById('resultScreen').classList.contains('active')) {
+            this.showResult();
+        }
+        // 랭킹 등 기타 화면은 필요시 추가
+    }
+}
+
+// 언어 상태 전역 변수 추가
+let currentLang = 'ko';
+
+// 언어 토글 함수
+function toggleLanguage() {
+    currentLang = currentLang === 'ko' ? 'en' : 'ko';
+    updateAllTexts();
+}
+
+// 언어별 텍스트 반환 함수
+function getText(obj, key) {
+    if (currentLang === 'en' && obj[key + '_en']) return obj[key + '_en'];
+    return obj[key];
+}
+
+// 모든 화면의 텍스트를 언어에 맞게 업데이트
+function updateAllTexts() {
+    // 시작 화면
+    document.querySelector('.title').textContent = currentLang === 'ko' ? '🧐 꼰대 테스트' : '🧐 Kkondae Test';
+    document.querySelector('.subtitle').textContent = currentLang === 'ko' ? '당신은 얼마나 꼰대일까요?' : 'How much of a kkondae are you?';
+    document.querySelector('label[for="nickname"]').textContent = currentLang === 'ko' ? '별명을 입력해주세요' : 'Enter your nickname';
+    document.getElementById('nickname').placeholder = currentLang === 'ko' ? '예: 김철수' : 'e.g. John Doe';
+    document.getElementById('startBtn').innerHTML = `<i class="fas fa-play"></i> ${currentLang === 'ko' ? '테스트 시작하기' : 'Start Test'}`;
+    document.getElementById('langToggleBtn').textContent = currentLang === 'ko' ? 'ENGLISH' : '한국어';
+
+    // 결과 화면 버튼
+    document.getElementById('shareBtn').innerHTML = `<i class="fas fa-share-alt"></i> ${currentLang === 'ko' ? '카카오톡 공유' : 'Share on Kakao'}`;
+    document.getElementById('rankingBtn').innerHTML = `<i class="fas fa-trophy"></i> ${currentLang === 'ko' ? '랭킹 보기' : 'View Ranking'}`;
+    document.getElementById('retryBtn').innerHTML = `<i class="fas fa-redo"></i> ${currentLang === 'ko' ? '다시 테스트' : 'Retry'}`;
+    // 결과 화면 점수 텍스트
+    document.querySelector('.score-text').textContent = currentLang === 'ko' ? '꼰대 점수: ' : 'Kkondae Score: ';
+    document.querySelector('.score-max').textContent = '/ 15';
+
+    // 랭킹 화면
+    document.querySelector('.ranking-title').textContent = currentLang === 'ko' ? '🏆 꼰대 랭킹' : '🏆 Kkondae Ranking';
+    document.querySelector('.ranking-subtitle').textContent = currentLang === 'ko' ? '꼰대일수록 1등! (같은 점수면 동급)' : 'The more kkondae, the higher the rank! (Same score = same rank)';
+    document.getElementById('backToResultBtn').innerHTML = `<i class="fas fa-arrow-left"></i> ${currentLang === 'ko' ? '결과로 돌아가기' : 'Back to Result'}`;
+
+    // 질문/옵션/결과 등 동적 텍스트는 각 화면 렌더링 시점에 반영
+    if (window.kkondaeTestInstance) {
+        window.kkondaeTestInstance.refreshDynamicTexts();
+    }
 }
 
 // 앱 초기화
@@ -324,7 +380,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // 2초 후 로딩 화면 제거하고 앱 시작
     setTimeout(() => {
         loadingScreen.remove();
-        new KkondaeTest();
+        window.kkondaeTestInstance = new KkondaeTest();
+        updateAllTexts();
+        // 언어 토글 버튼 이벤트 바인딩
+        document.getElementById('langToggleBtn').addEventListener('click', toggleLanguage);
     }, 2000);
 });
 
