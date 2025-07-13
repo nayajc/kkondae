@@ -127,6 +127,21 @@ body {
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
+/* 개발자 정보 */
+.developer-info {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e6ed;
+    text-align: center;
+}
+
+.developer-info p {
+    color: #95a5a6;
+    font-size: 0.9rem;
+    font-weight: 400;
+    margin: 0;
+}
+
 /* 버튼 스타일 */
 .btn-primary, .btn-secondary, .btn-outline {
     width: 100%;
