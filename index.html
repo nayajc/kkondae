@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>꼰대 테스트 🧐</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 시작 화면 -->
+        <div id="startScreen" class="screen active">
+            <div class="header">
+                <h1 class="title">🧐 꼰대 테스트</h1>
+                <p class="subtitle">당신은 얼마나 꼰대일까요?</p>
+            </div>
+            
+            <div class="intro-content">
+                <div class="emoji-container">
+                    <span class="emoji">👴</span>
+                    <span class="emoji">👨‍💼</span>
+                    <span class="emoji">👩‍💼</span>
+                    <span class="emoji">🧓</span>
+                </div>
+                
+                <div class="description">
+                    <p>회사의 꼰대 문화를 척결하기 위한 재미있는 테스트입니다!</p>
+                    <p>당신이 얼마나 꼰대인지 스스로 돌아볼 수 있는 기회를 마련해드려요.</p>
+                </div>
+                
+                <div class="nickname-input">
+                    <label for="nickname">별명을 입력해주세요</label>
+                    <input type="text" id="nickname" placeholder="예: 김철수" maxlength="10">
+                    <button id="startBtn" class="btn-primary" disabled>
+                        <i class="fas fa-play"></i> 테스트 시작하기
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 테스트 화면 -->
+        <div id="testScreen" class="screen">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+                <span class="progress-text">1 / 15</span>
+            </div>
+            
+            <div class="question-container">
+                <h2 class="question-text"></h2>
+                <div class="options">
+                    <button class="option-btn" data-score="0">
+                        <span class="option-text"></span>
+                    </button>
+                    <button class="option-btn" data-score="1">
+                        <span class="option-text"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 결과 화면 -->
+        <div id="resultScreen" class="screen">
+            <div class="result-header">
+                <h2 class="result-title"></h2>
+                <div class="result-emoji"></div>
+                <div class="score-display">
+                    <span class="score-text">꼰대 점수: </span>
+                    <span class="score-value"></span>
+                    <span class="score-max">/ 15</span>
+                </div>
+            </div>
+            
+            <div class="result-description"></div>
+            
+            <div class="action-buttons">
+                <button id="shareBtn" class="btn-secondary">
+                    <i class="fas fa-share-alt"></i> 카카오톡 공유
+                </button>
+                <button id="rankingBtn" class="btn-primary">
+                    <i class="fas fa-trophy"></i> 랭킹 보기
+                </button>
+                <button id="retryBtn" class="btn-outline">
+                    <i class="fas fa-redo"></i> 다시 테스트
+                </button>
+            </div>
+        </div>
+
+        <!-- 랭킹 화면 -->
+        <div id="rankingScreen" class="screen">
+            <div class="ranking-header">
+                <h2 class="ranking-title">🏆 꼰대 랭킹</h2>
+                <p class="ranking-subtitle">꼰대일수록 1등! (같은 점수면 동급)</p>
+            </div>
+            
+            <div class="ranking-list">
+                <div class="loading">랭킹을 불러오는 중...</div>
+            </div>
+            
+            <button id="backToResultBtn" class="btn-outline">
+                <i class="fas fa-arrow-left"></i> 결과로 돌아가기
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    
+    <!-- 앱 스크립트 -->
+    <script src="questions.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="local-storage.js"></script>
+    <script src="app.js"></script>
+    
+    <!-- Firebase 초기화 재시도 -->
+    <script>
+        // Firebase SDK 로딩 확인 및 재시도
+        window.addEventListener('load', function() {
+            if (typeof firebase !== 'undefined' && !db) {
+                console.log('Firebase 재초기화 시도...');
+                initializeFirebase();
+            }
+        });
+    </script>
+</body>
+</html> 

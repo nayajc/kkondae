@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "기록": {
+      ".read": true,
+      ".write": true,
+      "$result": {
+        ".validate": "newData.hasChildren(['nickname', 'score', 'resultType', 'timestamp', 'date'])"
+      }
+    }
+  }
+} 
