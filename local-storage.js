@@ -37,8 +37,17 @@ class LocalStorageManager {
         try {
             const results = this.getResults();
             
+            // 최근 2주간의 데이터만 필터링
+            const twoWeeksAgo = new Date();
+            twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14); // 14일 전부터
+            
+            const recentResults = results.filter(result => {
+                const timestamp = result.timestamp;
+                return timestamp && new Date(timestamp) >= twoWeeksAgo;
+            });
+            
             // 점수순으로 정렬 (꼰대일수록 높은 순위)
-            const sortedResults = results.sort((a, b) => {
+            const sortedResults = recentResults.sort((a, b) => {
                 if (b.score !== a.score) {
                     return b.score - a.score;
                 }
@@ -46,10 +55,10 @@ class LocalStorageManager {
                 return new Date(b.timestamp) - new Date(a.timestamp);
             });
 
-            // 상위 50명만 반환
-            const topResults = sortedResults.slice(0, 50);
+            // 최근 15명만 반환
+            const topResults = sortedResults.slice(0, 15);
             
-            console.log('로컬 스토리지에서 랭킹 조회 성공:', topResults.length + '개');
+            console.log('로컬 스토리지에서 랭킹 조회 성공 (최근 2주간, 상위 15명):', topResults.length + '개');
             return { success: true, rankings: topResults };
         } catch (error) {
             console.error('로컬 스토리지 랭킹 조회 실패:', error);

@@ -88,17 +88,25 @@ async function getRankingsFromFirebase() {
             return { success: true, rankings: [] };
         }
 
-        // 데이터를 배열로 변환하고 정렬
+        // 최근 2주간의 데이터만 필터링
+        const twoWeeksAgo = new Date();
+        twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14); // 14일 전부터
+        const twoWeeksAgoStr = twoWeeksAgo.toISOString();
+
+        // 데이터를 배열로 변환하고 최근 2주간 필터링
         const rankings = [];
         Object.keys(data).forEach(key => {
-            rankings.push({
-                id: key,
-                nickname: data[key].nickname,
-                score: data[key].score,
-                resultType: data[key].resultType,
-                timestamp: data[key].timestamp,
-                date: data[key].date
-            });
+            const timestamp = data[key].timestamp;
+            if (timestamp && new Date(timestamp) >= twoWeeksAgo) {
+                rankings.push({
+                    id: key,
+                    nickname: data[key].nickname,
+                    score: data[key].score,
+                    resultType: data[key].resultType,
+                    timestamp: data[key].timestamp,
+                    date: data[key].date
+                });
+            }
         });
 
         // 꼰대일수록 높은 순위로 정렬 (같은 점수면 최신순)
@@ -109,10 +117,10 @@ async function getRankingsFromFirebase() {
             return new Date(b.timestamp) - new Date(a.timestamp);
         });
 
-        // 상위 50명만 반환
-        const topRankings = rankings.slice(0, 50);
+        // 최근 15명만 반환
+        const topRankings = rankings.slice(0, 15);
 
-        console.log('Firebase Realtime Database 랭킹 조회 성공:', topRankings.length + '개');
+        console.log('Firebase Realtime Database 랭킹 조회 성공 (최근 2주간, 상위 15명):', topRankings.length + '개');
         return { success: true, rankings: topRankings };
     } catch (error) {
         console.error('Firebase 랭킹 조회 실패:', error);
@@ -127,10 +135,15 @@ function subscribeToRankings(callback) {
         return null;
     }
 
+    // 최근 2주간의 데이터만 필터링
+    const twoWeeksAgo = new Date();
+    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14); // 14일 전부터
+
     return db.collection('기록')
+        .where('timestamp', '>=', twoWeeksAgo.toISOString())
         .orderBy('score', 'desc')
         .orderBy('timestamp', 'desc')
-        .limit(50)
+        .limit(15)
         .onSnapshot(snapshot => {
             const rankings = [];
             snapshot.forEach(doc => {

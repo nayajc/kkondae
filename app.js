@@ -357,7 +357,7 @@ function updateAllTexts() {
 
     // 랭킹 화면
     document.querySelector('.ranking-title').textContent = currentLang === 'ko' ? '🏆 꼰대 랭킹' : '🏆 Kkondae Ranking';
-    document.querySelector('.ranking-subtitle').textContent = currentLang === 'ko' ? '꼰대일수록 1등! (같은 점수면 동급)' : 'The more kkondae, the higher the rank! (Same score = same rank)';
+    document.querySelector('.ranking-subtitle').textContent = currentLang === 'ko' ? '최근 2주간 상위 15명! 꼰대일수록 1등! (같은 점수면 동급)' : 'Top 15 from the last 2 weeks! The more kkondae, the higher the rank! (Same score = same rank)';
     document.getElementById('backToResultBtn').innerHTML = `<i class="fas fa-arrow-left"></i> ${currentLang === 'ko' ? '결과로 돌아가기' : 'Back to Result'}`;
 
     // 질문/옵션/결과 등 동적 텍스트는 각 화면 렌더링 시점에 반영
